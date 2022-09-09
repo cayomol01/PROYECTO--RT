@@ -12,10 +12,13 @@ brick = Material(diffuse = (0.8, 0.3, 0.3))
 stone = Material(diffuse = (0.4, 0.4, 0.4))
 grass = Material(diffuse = (0.3, 1, 0.3))
 
-snow = Material(diffuse = (1,1,1))
+snow = Material(diffuse = (0.9,0.9,0.9))
 button = Material(diffuse = (0.2,0.2,0.2))
 mouth = Material(diffuse=(0.4,0.4,0.4))
 nose = Material(diffuse = (1,0.63,0.20))
+
+oeye = Material(diffuse=(1,1,1))
+ieye = Material(diffuse=(0,0,0))
 
 
 
@@ -50,6 +53,14 @@ rtx.scene.append(Sphere(V3(-0.20,2.8,-8.75), 0.125, mouth))
 #Nose
 rtx.scene.append(Sphere(V3(0,3.5,-8.50), 0.20, nose))
 
+#eyes
+rtx.scene.append(Sphere(V3(-0.50, 3.75, -8.70), 0.20, oeye))
+rtx.scene.append(Sphere(V3(-0.50, 3.75, -8.55), 0.125, ieye))
+
+rtx.scene.append(Sphere(V3(0.50, 3.75, -8.70), 0.20, oeye))
+rtx.scene.append(Sphere(V3(0.50, 3.75, -8.55), 0.125, ieye))
+
+
 rtx.glRender()
 
-rtx.glFinish("outputs/output.bmp")
+rtx.glFinish("outputs/snowman.bmp")
