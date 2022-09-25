@@ -172,19 +172,3 @@ class matlib(object):
     
     
 
-
-''' lib = matlib()
-a = np.array([[1, 2],
-              [3, 4]])
-b = np.array([1, 2])
-print(a)
-
-print(a@b) 
-
-
-
-a = [[1, 2],
-    [3, 4]]
-b = [1,2]
-print(lib.matmul(a, b)) '''
-
