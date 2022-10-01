@@ -26,6 +26,11 @@ rtx.lights.append( AmbientLight(intensity = 0.1 ))
 rtx.lights.append( DirectionalLight(direction = (-1,-1,-1), intensity = 0.8 ))
 #rtx.lights.append( PointLight(point = (0,0,0)))
 
+rtx.scene.append(Plane(position = (0,-10,0), normal = (0,1,0), material = oro))
+rtx.scene.append(Plane(position = (-20,0,0), normal = (1,0,0), material = esmeralda))
+rtx.scene.append(AABB(position = (-2, -2, -10), size = (2,2,2), material = esmeralda))
+
+''' 
 rtx.scene.append( Sphere(V3(1.5,3,-10), 1, glass)  )
 rtx.scene.append( Sphere(V3(-1.5,3,-10), 1, gota)  )
 
@@ -34,7 +39,7 @@ rtx.scene.append( Sphere(V3(-3,0,-10), 1, esmeralda)  )
 
 rtx.scene.append( Sphere(V3(1.5,-3,-10),1, diamond)  )
 rtx.scene.append( Sphere(V3(-1.5,-3,-10), 1, ruby)  ) 
-
+ '''
 ''' rtx.scene.append(Sphere(V3(0,0,-10),3,glass))
 '''
 
