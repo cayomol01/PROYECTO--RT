@@ -129,7 +129,6 @@ class AABB(object):
                 if self.boundsMin[0] <= planePoint[0] <= self.boundsMax[0]:
                     if self.boundsMin[1] <= planePoint[1] <= self.boundsMax[1]:
                         if self.boundsMin[2] <= planePoint[2] <= self.boundsMax[2]:
-                            
                             if planeInter.distance < t:
                                 t = planeInter.distance
                                 intersect = planeInter
