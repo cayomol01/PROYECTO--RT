@@ -128,7 +128,53 @@ class Plane(object):
                         normal = self.normal,
                         sceneObj = self)
 
+#Contents Möller-Trumbore algorithm  
+#obtenido de: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection             
+class Triangle(object):
+    def __init__(self, v0, v1, v2, material) -> None:
+        self.v0 = v0
+        self.v1 = v1
+        self.v2 = v2
+        self.material = material
+        
+    def ray_intersect(self, orig, dir):
+        
+        epsilon = 0.001
+        
+        v0v1 = np.subtract(self.v1,self.v0)
+        v0v2 = np.subtract(self.v2, self.v0)
+        
+        pvec = np.cross(dir, v0v2)
+        det = np.dot(v0v1, pvec)
+        
+        if det < epsilon: return None
+        if abs(det) < epsilon: return None
+        
+        invDet = 1/det
+        
+        tvec = np.subtract(orig,self.v0)
+        u = np.dot(tvec, pvec)*invDet
+        
+        if (u<0 or u>1): return None
+        
+        qvec = np.cross(tvec, v0v1)
+        v = np.dot(dir, qvec)*invDet
+        
+        if (v<0 or u+v >1): return None
+        
+        t = np.dot(v0v2, qvec)*invDet
+        
+        if t > 0:
+            P = np.add(orig, t*np.array(dir))
+            normal = np.cross(v0v1, v0v2)
+            normal = normal/np.linalg.norm(normal)
+            return Intersect(distance = t,
+                            point = P,
+                            normal = normal,
+                            sceneObj = self)    
+            
         return None
+        
     
 class AABB(object):
     def __init__(self,position, size, material) -> None:
