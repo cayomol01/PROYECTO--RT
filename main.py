@@ -26,8 +26,8 @@ BLACK = Material(diffuse = (0.0, 0.0, 0.0), ior = 1.34, spec = 64, matType = OPA
 brillo = Material(diffuse = (1.0, 1.0, 1.0), ior = 1.34, spec = 64, matType = OPAQUE)
 BGREEN = Material(diffuse = (0.2, 0.9, 0.7), ior = 1.34, spec = 50,texture=Texture("Assets/BFeathers.bmp"), matType = REFLECTIVE)
 HGREEN = Material(diffuse = (0.2, 0.9, 0.7), ior = 1.34, spec = 50,texture=Texture("Assets/HFeathers.bmp"), matType = REFLECTIVE)
-PICO = Material(diffuse = (1.0, 0.5, 0.0), ior = 1.34, spec = 50, texture= Texture("Assets/Beak.bmp"), matType = OPAQUE)
-PICOA = Material(diffuse = (0.9, 0.4, 0.0), ior = 1.34, spec = 50, texture= Texture("Assets/Beak.bmp"), matType = OPAQUE)
+PICO = Material(diffuse = (1.0, 0.5, 0.0), ior = 1.34, spec = 50, texture= Texture("Assets/Streak.bmp"), matType = OPAQUE)
+PICOA = Material(diffuse = (0.9, 0.4, 0.0), ior = 1.34, spec = 50, texture= Texture("Assets/Streak.bmp"), matType = OPAQUE)
 PATAS = Material(diffuse = (0.9, 0.4, 0.0), ior = 1.5, spec = 50, matType = OPAQUE)
 DEDOS = Material(diffuse = (0.9, 0.4, 0.0), ior = 1.5, spec = 50, matType = TRANSPARENT)
 
