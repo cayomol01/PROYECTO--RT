@@ -25,8 +25,9 @@ eye = Material(diffuse = (0.9, 0.9, 0.9), ior = 1.34, spec = 64, matType = REFLE
 BLACK = Material(diffuse = (0.0, 0.0, 0.0), ior = 1.34, spec = 64, matType = OPAQUE)
 brillo = Material(diffuse = (1.0, 1.0, 1.0), ior = 1.34, spec = 64, matType = OPAQUE)
 BGREEN = Material(diffuse = (0.2, 0.9, 0.7), ior = 1.34, spec = 50,texture=Texture("Assets/BFeathers.bmp"), matType = REFLECTIVE)
+GREEN = Material(diffuse = (0.2, 0.9, 0.7), ior = 1.34, spec = 50, matType = REFLECTIVE)
 HGREEN = Material(diffuse = (0.2, 0.9, 0.7), ior = 1.34, spec = 50,texture=Texture("Assets/HFeathers.bmp"), matType = REFLECTIVE)
-PICO = Material(diffuse = (1.0, 0.5, 0.0), ior = 1.34, spec = 50, texture= Texture("Assets/Streak.bmp"), matType = OPAQUE)
+PICO = Material(spec = 50, texture= Texture("Assets/Beak.bmp"), matType = OPAQUE)
 PICOA = Material(diffuse = (0.9, 0.4, 0.0), ior = 1.34, spec = 50, texture= Texture("Assets/Streak.bmp"), matType = OPAQUE)
 PATAS = Material(diffuse = (0.9, 0.4, 0.0), ior = 1.5, spec = 50, matType = OPAQUE)
 DEDOS = Material(diffuse = (0.9, 0.4, 0.0), ior = 1.5, spec = 50, matType = TRANSPARENT)
@@ -46,11 +47,18 @@ def Loro():
     rtx.scene.append( Triangle(v0 = (0.5,-0.9,-10), v1 = (3,0.0,-10), v2 = (1.0,0.0,-10), material = PICO) )
     #PICO ARRIBA
     #rtx.scene.append( Triangle(v0 = (-3,0,-7), v1 = (0,0,-7), v2 = (0,3,-7), material = gota) )
-    rtx.scene.append(Sphere((-3,-6,-30), 5, material = BGREEN))
-    rtx.scene.append(AABB((-4,-12,-30), (1,3,1), material=PATAS))
+    rtx.scene.append(Sphere((-3,-6,-30), 5, material = GREEN))
+    rtx.scene.append(AABB((-4,-12,-30), (1,3,1), material=PICO))
     rtx.scene.append(AABB((-1,-12,-30), (1,3,1), material=PATAS))
     rtx.scene.append(Disk((-0.5,-14,-30), 2, (0,1,0), material=DEDOS))
     rtx.scene.append(Disk((-3.5,-14,-30), 2, (0,1,0), material=DEDOS))
+    
+    #rtx.scene.append(Sphere((-3,-6,-30), 5, material = BGREEN))
+    #
+    #Ala
+    rtx.scene.append( Triangle(v0 = (-5,6,-6), v1 = (-2.5,-6,-6), v2 = (3.0,-5.0,-7), material = GREEN) )
+    
+    
     
     
     
