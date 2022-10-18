@@ -16,11 +16,13 @@ class Intersect(object):
         self.sceneObj = sceneObj
 
 class Material(object):
-    def __init__(self, diffuse = WHITE, spec = 1.0, ior = 1.0, matType = OPAQUE):
+    def __init__(self, diffuse = WHITE, spec = 1.0, ior = 1.0,texture = None, matType = OPAQUE):
         self.diffuse = diffuse
         self.spec = spec
         self.ior = ior
+        self.texture = texture
         self.matType = matType
+        
 
 
 class Sphere(object):
