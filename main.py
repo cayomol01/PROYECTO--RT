@@ -1,8 +1,12 @@
 from re import M
-from gl import Raytracer, V3
+from gl2 import Raytracer, V3
 from texture import *
-from figures import *
+#from figures2 import *
+#from lights2 import *
 from lights import *
+from figures import *
+
+
 
 
 width = 1024
@@ -56,7 +60,7 @@ def Loro():
     #rtx.scene.append(Sphere((-3,-6,-30), 5, material = BGREEN))
     #
     #Ala
-    rtx.scene.append( Triangle(v0 = (-5,6,-6), v1 = (-2.5,-6,-6), v2 = (3.0,-5.0,-7), material = GREEN) )
+    rtx.scene.append( Triangle(v0 = (-2,6,-20), v1 = (-2.5,-6,-20), v2 = (3.0,0,-20), material = GREEN) )
     
     
     
@@ -107,4 +111,4 @@ rtx.scene.append( Sphere(V3(-1.5,-3,-10), 1, ruby)  )
 
 rtx.glRender()
 
-rtx.glFinish("outputs/output.bmp")
+rtx.glFinish("outputs/pruebaT.bmp")

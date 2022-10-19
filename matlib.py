@@ -9,16 +9,32 @@ class matlib(object):
     
     
     def Add(self, matrix1, matrix2):
-        result = [[matrix1[i][j] + matrix2[i][j]  for j in range(len(matrix1[0]))] for i in range(len(matrix1))]
-        return result
-    
-    def Substract(self, matrix1, matrix2):
         try:
-            result = [[matrix1[i][j] - matrix2[i][j]  for j in range(len(matrix1[0]))] for i in range(len(matrix1))]
+            result = [[matrix1[i][j] + matrix2[i][j]  for j in range(len(matrix1[0]))] for i in range(len(matrix1))]
             return result
         except:
+            result = [matrix1[i] + matrix2[i] for i in range(len(matrix1))]
+            return result
+    
+    def Subtract(self, matrix1, matrix2):
+        if type(matrix1[0]) == list:
+            result = [[matrix1[i][j] - matrix2[i][j]  for j in range(len(matrix1[0]))] for i in range(len(matrix1))]
+            return result
+        else:
             result = [matrix1[i] - matrix2[i] for i in range(len(matrix1))]
             return result
+        
+    def ScalarMul(self,vector,scalar):
+        resul = []
+        for i in vector:
+            resul.append(i*scalar)
+        return resul
+    
+    def mul(self,v1,v2):
+        resul = []
+        for i in range(len(v1)):
+            resul.append(v1[i]*v2[i])
+        return resul
           
     def Product(self, matrix1, matrix2):
         res = [[0,0,0,0],
@@ -44,11 +60,11 @@ class matlib(object):
     def scalarDiv(self, matrix1, scalar):
         res = []
         for i in range(len(matrix1)):
-            try:
+            if matrix1[i] != 0:
                 res.append(matrix1[i]/scalar)
-            except:
+            else:
                 res.append(matrix1[i])
-        return matrix1
+        return res
     
     def dot(self, vector1, vector2):
         result = 0

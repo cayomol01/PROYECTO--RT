@@ -31,14 +31,16 @@ class Material(object):
 
 class Sphere(object):
     def __init__(self, center, radius, material):
-        self.center = center
+        self.center = list(center)
         self.radius = radius
         self.material = material
 
     def ray_intersect(self, orig, dir):
-        L = np.subtract(self.center, orig)
-        tca = np.dot(L, dir)
-        d = (np.linalg.norm(L) ** 2 - tca ** 2) ** 0.5
+        dir = list(dir)
+        orig = list(orig)
+        L = lib.Subtract(self.center,orig)
+        tca = lib.dot(L,dir)
+        d = (lib.norm(L) ** 2 - tca ** 2) ** 0.5
 
         if d > self.radius:
             return None
@@ -54,9 +56,9 @@ class Sphere(object):
             return None
         
         # P = O + t0 * D
-        P = np.add(orig, t0 * np.array(dir))
-        normal = np.subtract(P, self.center)
-        normal = normal / np.linalg.norm(normal)
+        P = lib.Add(orig, lib.ScalarMul(dir, t0))
+        normal = lib.Subtract(P, self.center)
+        normal = lib.scalarDiv(normal, lib.norm(normal))
         
         u = 1 - ((np.arctan2(normal[2], normal[0]) / (2 * np.pi)) + 0.5)
         v = np.arccos(-normal[1]) / np.pi
@@ -81,9 +83,9 @@ class Disk(object):
 
         if intersect is None:
             return None
-
-        contact = np.subtract(intersect.point, self.plane.position)
-        contact = np.linalg.norm(contact)
+        
+        contact = lib.Subtract(intersect.point, self.plane.position)
+        contact = lib.norm(contact)
 
         if contact > self.radius:
             return None
@@ -109,7 +111,7 @@ class Disk2(object):
             return None
 
         contact = np.subtract(intersect.point, self.plane.position)
-        contact = np.linalg.norm(contact)
+        contact = lib.norm(contact)
 
         if contact > self.radius or contact < self.radius2:
             return None
@@ -122,45 +124,50 @@ class Disk2(object):
 
 class Plane(object):
     def __init__(self, position, normal, material) -> None:
-        self.position = position
-        self.normal = normal / np.linalg.norm(normal)
+        normal = list(normal)
+        self.position = list(position)
+        self.normal =lib.scalarDiv(normal, lib.norm(list(normal)))
         self.material = material
         
+    
     def ray_intersect(self, orig, dir):
-        denom = np.dot(dir, self.normal)
+        orig = list(orig)
+        dir = list(dir)
+        denom = lib.dot(dir,self.normal)
         
         if abs(denom) > 0.0001:
-            num = np.dot(np.subtract(self.position, orig), self.normal)
+            num = lib.dot(lib.Subtract(self.position, orig), self.normal)
+
             
             t = num / denom
             
             if t > 0:
-                P = np.add(orig, t*np.array(dir))
-                
+                P = lib.Add(orig, lib.ScalarMul(dir,t))
                 return Intersect(distance = t,
                         point = P,
                         normal = self.normal,
                         texcoords= None,
                         sceneObj = self)
-
+        return None
 #Contents Möller-Trumbore algorithm  
 #obtenido de: https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/moller-trumbore-ray-triangle-intersection             
 class Triangle(object):
     def __init__(self, v0, v1, v2, material) -> None:
-        self.v0 = v0
-        self.v1 = v1
-        self.v2 = v2
+        self.v0 = list(v0)
+        self.v1 = list(v1)
+        self.v2 = list(v2)
         self.material = material
         
     def ray_intersect(self, orig, dir):
-        
+        orig = list(orig)
+        dir = list(dir)
         epsilon = 0.001
         
-        v0v1 = np.subtract(self.v1,self.v0)
-        v0v2 = np.subtract(self.v2, self.v0)
+        v0v1 = lib.Subtract(self.v1,self.v0)
+        v0v2 = lib.Subtract(self.v2, self.v0)
         
-        pvec = np.cross(dir, v0v2)
-        det = np.dot(v0v1, pvec)
+        pvec = lib.cross(dir, v0v2)
+        det = lib.dot(v0v1, pvec)
         
         if det < epsilon: return None
         if abs(det) < epsilon: return None
@@ -168,21 +175,21 @@ class Triangle(object):
         invDet = 1/det
         
         tvec = np.subtract(orig,self.v0)
-        u = np.dot(tvec, pvec)*invDet
+        u = lib.dot(tvec, pvec)*invDet
         
         if (u<0 or u>1): return None
         
-        qvec = np.cross(tvec, v0v1)
-        v = np.dot(dir, qvec)*invDet
+        qvec = lib.cross(tvec, v0v1)
+        v = lib.dot(dir, qvec)*invDet
         
         if (v<0 or u+v >1): return None
         
-        t = np.dot(v0v2, qvec)*invDet
+        t = lib.dot(v0v2, qvec)*invDet
         
         if t > 0:
-            P = np.add(orig, t*np.array(dir))
-            normal = np.cross(v0v1, v0v2)
-            normal = normal/np.linalg.norm(normal)
+            P = lib.Add(orig, lib.ScalarMul(dir, t))
+            normal = lib.cross(v0v1, v0v2)
+            normal = lib.scalarDiv(normal, lib.norm(normal))
             return Intersect(distance = t,
                             point = P,
                             texcoords = (u,v),
@@ -196,8 +203,8 @@ class AABB(object):
     # Axis Aligned Bounding Box
 
     def __init__(self, position, size, material):
-        self.position = position
-        self.size = size
+        self.position = list(position)
+        self.size = list(size)
         self.material = material
 
         self.planes = []
@@ -209,16 +216,16 @@ class AABB(object):
         halfSizes[2] = size[2] / 2
 
         # Sides
-        self.planes.append( Plane( np.add(position, (halfSizes[0],0,0)), (1,0,0), material ))
-        self.planes.append( Plane( np.add(position, (-halfSizes[0],0,0)), (-1,0,0), material ))
+        self.planes.append( Plane( lib.Add(position, list(halfSizes[0],0,0)), (1,0,0), material ))
+        self.planes.append( Plane( lib.Add(position, list(-halfSizes[0],0,0)), (-1,0,0), material ))
 
         # Up and Down
-        self.planes.append( Plane( np.add(position, (0,halfSizes[1],0)), (0,1,0), material ))
-        self.planes.append( Plane( np.add(position, (0,-halfSizes[1],0)), (0,-1,0), material ))
+        self.planes.append( Plane( lib.Add(position, list(0,halfSizes[1],0)), (0,1,0), material ))
+        self.planes.append( Plane( lib.Add(position, list(0,-halfSizes[1],0)), (0,-1,0), material ))
 
         # Front and back
-        self.planes.append( Plane( np.add(position, (0,0,halfSizes[2])), (0,0,1), material ))
-        self.planes.append( Plane( np.add(position, (0,0,-halfSizes[2])), (0,0,-1), material ))
+        self.planes.append( Plane( lib.Add(position, list(0,0,halfSizes[2])), (0,0,1), material ))
+        self.planes.append( Plane( lib.Add(position, list(0,0,-halfSizes[2])), (0,0,-1), material ))
 
         #Bounds
         self.boundsMin = [0,0,0]

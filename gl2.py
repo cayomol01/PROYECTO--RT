@@ -5,6 +5,7 @@ from figures2 import *
 from lights2 import *
 from math import cos, sin, tan, pi
 from obj import Obj
+from matlib import matlib
 
 
 STEPS = 1
@@ -12,6 +13,7 @@ OPAQUE = 0
 REFLECTIVE = 1
 TRANSPARENT = 2
 MAX_RECURSION_DEPTH = 3
+lib = matlib()
 
 V2 = namedtuple('Point2', ['x', 'y'])
 V3 = namedtuple('Point3', ['x', 'y', 'z'])
@@ -61,7 +63,7 @@ class Raytracer(object):
 
         self.fov = 60
         self.nearPlane = 0.1
-        self.camPosition = V3(0,0,0)
+        self.camPosition = [0,0,0]
 
         self.scene = [ ]
         self.lights = [ ]
@@ -129,10 +131,10 @@ class Raytracer(object):
 
         material = intersect.sceneObj.material
 
-        finalColor = np.array([0,0,0])
-        objectColor = np.array([material.diffuse[0],
-                                material.diffuse[1],
-                                material.diffuse[2]])
+        finalColor =    [0,0,0]
+        objectColor = [material.diffuse[0],
+                        material.diffuse[1],
+                        material.diffuse[2]]
 
         if material.matType == OPAQUE:
             for light in self.lights:
@@ -140,59 +142,55 @@ class Raytracer(object):
                 specColor = light.getSpecColor(intersect, self)
                 shadowIntensity = light.getShadowIntensity(intersect, self)
 
-                lightColor = (diffuseColor + specColor) * (1 - shadowIntensity)
+                lightColor = lib.ScalarMul(lib.Add(diffuseColor, specColor), (1 - shadowIntensity))
 
-                finalColor = np.add(finalColor, lightColor)
+                finalColor = lib.Add(finalColor, lightColor)
 
         elif material.matType == REFLECTIVE:
-            reflect = reflectVector(intersect.normal, np.array(dir) * -1)
+            reflect = reflectVector(intersect.normal, lib.ScalarMul(list(dir), -1))
             reflectColor = self.cast_ray(intersect.point, reflect, intersect.sceneObj, recursion + 1)
-            reflectColor = np.array(reflectColor)
+            reflectColor = list(reflectColor)
 
-            specColor = np.array([0,0,0])
+            specColor = [0,0,0]
             for light in self.lights:
-                specColor = np.add(specColor, light.getSpecColor(intersect, self))
+                specColor = lib.Add(specColor, light.getSpecColor(intersect, self))
 
-            finalColor = reflectColor + specColor
+            finalColor = lib.Add(reflectColor, specColor)
         
         elif material.matType == TRANSPARENT:
-            outside = np.dot(dir, intersect.normal) < 0.0
-            bias = intersect.normal*0.001
-            print("dir", dir, "intesect", intersect.normal)
-            print("mul:", np.dot(dir, intersect.normal))
-            print(a)
             
-            specColor = np.array([0,0,0])
+            outside = lib.dot(list(dir), intersect.normal) < 0.0
+            #print("dir", dir, "intesect", intersect.normal)
+            #print("mul:", lib.dot(list(dir), intersect.normal))
+            bias = lib.ScalarMul(intersect.normal, 0.001)
+            
+            specColor = [0,0,0]
             for light in self.lights:
-                specColor = np.add(specColor, light.getSpecColor(intersect, self))
+                specColor = lib.Add(specColor, light.getSpecColor(intersect, self))
             
-            reflect = reflectVector(intersect.normal, np.array(dir)*-1)
-            reflectOrig = np.add(intersect.point, bias) if outside else np.subtract(intersect.point, bias)
+            reflect = reflectVector(intersect.normal, lib.ScalarMul(list(dir),-1))
+            reflectOrig = lib.Add(intersect.point, bias) if outside else lib.Subtract(intersect.point, bias)
             reflectColor = self.cast_ray(reflectOrig, reflect, None, recursion +1)
-            reflectColor = np.array(reflectColor)
+            reflectColor = list(reflectColor)
             
             kr = fresnel(intersect.normal, dir, material.ior)
-            refractColor = np.array([0,0,0])
+            refractColor =[0,0,0]
             if kr < 1:
                 refract = refractVector(intersect.normal, dir, material.ior)
-                refractOrig = np.subtract(intersect.point, bias) if outside else np.add(intersect.point, bias)
+                refractOrig = lib.Subtract(intersect.point, bias) if outside else lib.Add(intersect.point, bias)
                 refractColor = self.cast_ray(refractOrig, refract, None, recursion +1)
-                refractColor = np.array(refractColor)
-            finalColor = reflectColor*kr + refractColor * (1-kr) + specColor
+                refractColor = list(refractColor)
+            finalColor = lib.Add(lib.Add(lib.ScalarMul(reflectColor,kr), lib.ScalarMul(refractColor, (1-kr))),specColor)
             
-            #print("final color: ",finalColor)
-            #print("Object color: ",objectColor)
-            #print("finalcolor * objectColor: ",finalColor*objectColor)
-            #print("finalcolor * objectColor dotProduct: ",np.dot(finalColor,objectColor))
-            #print("finalcolor * objectColor crossProduct: ",np.cross(finalColor,objectColor))
 
-        finalColor *= objectColor
+
+        finalColor = lib.mul(finalColor,objectColor)
 
             
         if material.texture and intersect.texcoords:
             texColor = material.texture.getColor(intersect.texcoords[0], intersect.texcoords[1])
             if texColor is not None:
-                finalColor *= np.array(texColor)
+                finalColor = lib.mul(finalColor,list(texColor))
 
         r = min(1, finalColor[0])
         g = min(1, finalColor[1])
@@ -216,12 +214,9 @@ class Raytracer(object):
                 Px *= r
                 Py *= t
 
-                direction = V3(Px, Py, -self.nearPlane)
-
-                
+                direction = list((Px, Py, -self.nearPlane))
                 #print("Direction", direction, "norm: ",lib.norm(direction))
-                
-                direction = direction / np.linalg.norm(direction)
+                direction = lib.scalarDiv(direction, lib.norm(direction))
                 #print("Direction", direction)
                 #print(direction[4])
 
